@@ -1,5 +1,6 @@
 package com.example.api_gateway.filter;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,6 +18,14 @@ public class JwtUtil {
 
     public void validateToken(final String token){
         Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
+    }
+
+    public Claims getClaims(final String token){
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private SecretKey getSigningKey() {
