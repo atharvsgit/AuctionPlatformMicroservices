@@ -19,6 +19,12 @@ spring:
                 - Path=/api/auctions/**
               filters:
                 - AuthenticationFilter
+            - id: bidding-service
+              uri: lb://BIDDING-SERVICE
+              predicates:
+                - Path=/api/bids/**
+              filters:
+                - AuthenticationFilter
 
 eureka:
   instance:
