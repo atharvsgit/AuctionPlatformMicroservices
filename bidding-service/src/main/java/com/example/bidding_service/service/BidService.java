@@ -2,9 +2,12 @@ package com.example.bidding_service.service;
 
 import com.example.bidding_service.client.AuctionClient;
 import com.example.bidding_service.dto.AuctionDto;
+import com.example.bidding_service.dto.BidPlacedEvent;
 import com.example.bidding_service.model.Bid;
 import com.example.bidding_service.repo.BidRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,6 +23,10 @@ public class BidService {
     @Autowired
     private AuctionClient auctionClient;
 
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Transactional
     public Bid placeBid(Long auctionId, Long bidderId, BigDecimal amount){
         AuctionDto auctionDto = auctionClient.getAuctionById(auctionId);
         if(!"ACTIVE".equals(auctionDto.getStatus())) throw new RuntimeException("This auction is no longer active");
@@ -37,6 +44,12 @@ public class BidService {
         Bid savedBid = bidRepo.save(bid);
 
         auctionClient.updateAuctionPrice(auctionId, amount);
+
+//        String msg = String.format("User %d placed a winning bid of $%s on Auction %d", bidderId, amount, auctionId);
+//        kafkaTemplate.send("bid-events", msg);
+
+        BidPlacedEvent e = new BidPlacedEvent(auctionId, bidderId, auctionDto.getSellerId(), amount);
+        kafkaTemplate.send("bid-events", e);
 
         return savedBid;
     }

@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5433/auction_db
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:atharv}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -26,5 +26,5 @@ eureka:
       defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
 
 jwt:
-  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 86400000
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRY}

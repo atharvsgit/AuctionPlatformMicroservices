@@ -2,10 +2,14 @@ server:
   port: 8083
 
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   datasource:
     url: jdbc:postgresql://localhost:5433/auction_db
-    username: postgres
-    password: atharv
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
