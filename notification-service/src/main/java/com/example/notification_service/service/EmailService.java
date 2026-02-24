@@ -28,4 +28,21 @@ public class EmailService {
         System.out.println("Email sent to : "+toEmail);
     }
 
+    public void sendAuctionEndedEmail(String sellerEmail, String winnerEmail, Long auctionId){
+        SimpleMailMessage smmSeller = new SimpleMailMessage();
+        smmSeller.setFrom(fromMail);
+        smmSeller.setTo(sellerEmail);
+        smmSeller.setSubject("Your Auction #"+auctionId+" has ended!");
+        smmSeller.setText("Congratulations! Your auction has officially closed. Check dashboard for further details.");
+        javaMailSender.send(smmSeller);
+        SimpleMailMessage smmWinner = new SimpleMailMessage();
+        smmWinner.setFrom(fromMail);
+        smmWinner.setTo(winnerEmail);
+        smmWinner.setSubject("You WON! Auction #"+auctionId);
+        smmWinner.setText("Great news! The auction has ended and you are the highest bidder for item #" + auctionId + "!");
+        javaMailSender.send(smmWinner);
+
+        System.out.println("End of auction mails sent!");
+    }
+
 }
