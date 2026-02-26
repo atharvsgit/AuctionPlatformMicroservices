@@ -1,0 +1,31 @@
+name: Microservices CI Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Create dummy .env file
+        run: |
+          echo "DB_USER=github_test">>.env
+          echo "DB_PASSWORD=github_test">>.env
+          echo "JWT_SECRET=qwertyuiopasdfghjklzxcvbnm1234567890">>.env
+          echo "JWT_EXPIRY=8640000">>.env
+          echo "MAIL_USERNAME=test@gmail.com">>.env
+          echo "MAIL_PASSWORD=testpwd">>.env
+      - name: Build Docker Images
+        run: docker-compose build
