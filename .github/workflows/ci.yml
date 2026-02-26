@@ -28,4 +28,4 @@ jobs:
           echo "MAIL_USERNAME=test@gmail.com">>.env
           echo "MAIL_PASSWORD=testpwd">>.env
       - name: Build Docker Images
-        run: docker-compose build
+        run: docker compose build
