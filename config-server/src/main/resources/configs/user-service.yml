@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5433/auction_db
+    url: jdbc:postgresql://${DB_HOST:postgres}:5432/auction_db
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -16,14 +16,14 @@ spring:
           create_namespaces: true
     show-sql: true
   kafka:
-    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
+    bootstrap-servers: ${KAFKA_HOST:kafka}:29092
 
 eureka:
   instance:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+      defaultZone: http://${EUREKA_HOST:eureka-server}:8761/eureka/
 
 jwt:
   secret: ${JWT_SECRET}

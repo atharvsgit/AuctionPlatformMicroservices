@@ -17,6 +17,9 @@ public class UserResponse {
         return role;
     }
 
+    public UserResponse() {
+    }
+
     public UserResponse(Long id, String email, String role) {
         this.id = id;
         this.email = email;

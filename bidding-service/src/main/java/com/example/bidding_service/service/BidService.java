@@ -5,6 +5,7 @@ import com.example.bidding_service.dto.AuctionDto;
 import com.example.bidding_service.dto.BidPlacedEvent;
 import com.example.bidding_service.model.Bid;
 import com.example.bidding_service.repo.BidRepo;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,7 +27,8 @@ public class BidService {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Transactional
+//    @Transactional
+    @CircuitBreaker(name="auctionServiceBreaker", fallbackMethod = "auctionServiceFallback")
     public Bid placeBid(Long auctionId, Long bidderId, BigDecimal amount){
         AuctionDto auctionDto = auctionClient.getAuctionById(auctionId);
         if(!"ACTIVE".equals(auctionDto.getStatus())) throw new RuntimeException("This auction is no longer active");
@@ -52,6 +54,12 @@ public class BidService {
         kafkaTemplate.send("bid-events", e);
 
         return savedBid;
+    }
+
+    public Bid auctionServiceFallback(Long auctionId, Long bidderId, BigDecimal amount, Throwable throwable){
+        System.err.println("CIRCUIT BREAKER - Auction Service is down! Reason : "+throwable.getMessage());
+        throw new RuntimeException("The Auction system is currently experiencing heavy load or is undergoing " +
+                "maintenance. Please try your bid again in a few moments.");
     }
 
     public List<Bid> getBidsForAuction(Long auctionId){
